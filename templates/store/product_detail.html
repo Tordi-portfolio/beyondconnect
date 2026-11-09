@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}{{ product.name }} — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ product.description|truncatechars:150 }}{% endblock %}
+
+{% block content %}
+<div class="detail">
+  <div class="detail-media" style="--h: {{ product.placeholder_hue }}">
+    {% if product.image_src %}<img src="{{ product.image_src }}" alt="{{ product.name }}">{% else %}<span class="ph-icon">{{ product.category.icon }}</span>{% endif %}
+    {% if product.has_discount %}<span class="badge badge-sale">-{{ product.discount_percent }}%</span>{% endif %}
+  </div>
+
+  <div>
+    <p class="breadcrumb"><a href="{% url 'store:home' %}">Home</a> / <a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></p>
+    <h1>{{ product.name }}</h1>
+
+    <div class="price-big">
+      <span class="price-now">{{ product.discounted_price|money }}</span>
+      {% if product.has_discount %}
+        <span class="price-old">{{ product.price|money }}</span>
+        <span class="pill pill-sale">Save {{ product.savings|money }} ({{ product.discount_percent }}% off)</span>
+      {% endif %}
+    </div>
+
+    <p>
+      {% if not product.in_stock %}<span class="pill pill-out">Out of stock</span>
+      {% elif product.is_low_stock %}<span class="pill pill-low">Only {{ product.stock }} left</span>
+      {% else %}<span class="pill pill-ok">In stock</span>{% endif %}
+    </p>
+
+    <p>{{ product.description|linebreaksbr }}</p>
+
+    {% if product.in_stock %}
+    <form action="{% url 'store:add_to_cart' product.pk %}" method="post" class="buy-row">
+      {% csrf_token %}
+      <select name="quantity" class="select" aria-label="Quantity">
+        {% for n in quantities %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+      </select>
+      <button type="submit" class="btn btn-primary">Add to cart</button>
+      <button type="submit" name="buy_now" value="1" class="btn btn-outline">Buy now</button>
+    </form>
+    {% else %}
+      <div class="buy-row"><button class="btn btn-ghost" disabled>Currently unavailable</button></div>
+    {% endif %}
+
+    <ul class="facts">
+      <li>🚚 Free delivery on orders over {{ FREE_SHIPPING|money }}</li>
+      <li>↩️ Cancel any time while your order is pending</li>
+      <li>🔒 Secure checkout with your {{ SITE_NAME }} account</li>
+    </ul>
+  </div>
+</div>
+
+{% if related %}
+<section class="section">
+  <div class="section-head"><h2>You may also like</h2></div>
+  <div class="grid">{% for product in related %}{% include "store/_product_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+{% endblock %}

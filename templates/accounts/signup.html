@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Create your account — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="card auth-card wide">
+    <h1>Create your account</h1>
+    <p class="muted">Join {{ SITE_NAME }} to track orders, save your details and check out faster.</p>
+    <form method="post" novalidate>
+      {% csrf_token %}
+      {% if form.non_field_errors %}<div class="alert-error">{{ form.non_field_errors }}</div>{% endif %}
+      <div class="form-grid">
+        <div class="field"><label for="{{ form.first_name.id_for_label }}">First name</label>{{ form.first_name }}{% for e in form.first_name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field"><label for="{{ form.last_name.id_for_label }}">Last name</label>{{ form.last_name }}{% for e in form.last_name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field"><label for="{{ form.username.id_for_label }}">Username</label>{{ form.username }}{% for e in form.username.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field"><label for="{{ form.email.id_for_label }}">Email address</label>{{ form.email }}{% for e in form.email.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field full">
+          <label for="{{ form.password1.id_for_label }}">Password</label>{{ form.password1 }}
+          <div class="help">{{ form.password1.help_text|safe }}</div>
+          {% for e in form.password1.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="field full">
+          <label for="{{ form.password2.id_for_label }}">Confirm password</label>{{ form.password2 }}
+          {% for e in form.password2.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block">Create account</button>
+    </form>
+    <p class="center muted small mt">Already have an account? <a href="{% url 'accounts:login' %}">Log in</a></p>
+  </div>
+</div>
+{% endblock %}

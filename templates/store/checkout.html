@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}Checkout — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Checkout</h1></div>
+
+<form method="post" class="two-col" style="margin-top:0">
+  {% csrf_token %}
+  <div class="card card-pad">
+    <h2>Delivery details</h2>
+    {% if form.non_field_errors %}<div class="alert-error">{{ form.non_field_errors }}</div>{% endif %}
+    <div class="form-grid">
+      <div class="field">
+        <label for="{{ form.full_name.id_for_label }}">Full name</label>{{ form.full_name }}
+        {% for e in form.full_name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="{{ form.email.id_for_label }}">Email</label>{{ form.email }}
+        {% for e in form.email.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="{{ form.phone.id_for_label }}">Phone</label>{{ form.phone }}
+        {% for e in form.phone.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field">
+        <label for="{{ form.city.id_for_label }}">City</label>{{ form.city }}
+        {% for e in form.city.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field full">
+        <label for="{{ form.address.id_for_label }}">Address</label>{{ form.address }}
+        {% for e in form.address.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+      </div>
+      <div class="field full">
+        <label for="{{ form.notes.id_for_label }}">Notes</label>{{ form.notes }}
+      </div>
+    </div>
+
+    <h2 class="mt">Payment method</h2>
+    <ul class="radio-list">
+      {% for radio in form.payment_method %}<li>{{ radio }}</li>{% endfor %}
+    </ul>
+    {% for e in form.payment_method.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+    <p class="small muted mt">You'll pay when your order arrives or by bank transfer — no card details are collected on this site.</p>
+  </div>
+
+  <aside class="card card-pad">
+    <h2>Your order</h2>
+    {% for line in cart.lines %}
+      <div class="summary-row">
+        <span>{{ line.quantity }} × {{ line.product.name }}</span>
+        <span>{{ line.line_total|money }}</span>
+      </div>
+    {% endfor %}
+    <div class="summary-row" style="border-top:1px solid var(--border);margin-top:.5rem;padding-top:.8rem"><span>Subtotal</span><span>{{ cart.subtotal|money }}</span></div>
+    <div class="summary-row"><span>Delivery</span><span>{% if cart.shipping == 0 %}Free{% else %}{{ cart.shipping|money }}{% endif %}</span></div>
+    <div class="summary-row total"><span>Total</span><span>{{ cart.total|money }}</span></div>
+    <button type="submit" class="btn btn-primary btn-block" style="margin-top:1rem">Place order</button>
+    <a href="{% url 'store:cart' %}" class="btn btn-ghost btn-block" style="margin-top:.6rem">Back to cart</a>
+  </aside>
+</form>
+{% endblock %}

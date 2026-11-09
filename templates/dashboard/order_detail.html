@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}{{ order.reference }} — Admin — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+  {% include "dashboard/_side_nav.html" %}
+
+  <div>
+    <p class="breadcrumb"><a href="{% url 'dashboard:orders' %}">← All orders</a></p>
+    <div class="section-head">
+      <h1 style="margin:0">Order {{ order.reference }}</h1>
+      <span class="status {{ order.status_class }}">{{ order.get_status_display }}</span>
+    </div>
+    <p class="muted">Placed {{ order.created_at|date:"j F Y, H:i" }}{% if order.user %} by <strong>{{ order.user.username }}</strong>{% endif %}</p>
+
+    {% if order.status != 'cancelled' %}
+    <form action="{% url 'dashboard:order_status' order.pk %}" method="post" class="card card-pad inline-form" style="margin-bottom:1.2rem;width:100%;flex-wrap:wrap">
+      {% csrf_token %}
+      <strong>Update status:</strong>
+      <select name="status" class="select">
+        {% for value, label in status_choices %}<option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-primary btn-sm" type="submit">Save</button>
+      <span class="muted small">Cancelling returns items to stock and can't be undone.</span>
+    </form>
+    {% endif %}
+
+    <div class="card" style="margin-bottom:1.2rem">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Item</th><th>Unit price</th><th>Qty</th><th class="right">Total</th></tr></thead>
+          <tbody>
+          {% for item in order.items.all %}
+            <tr><td>{{ item.product_name }}</td><td>{{ item.unit_price|money }}</td><td>{{ item.quantity }}</td><td class="right">{{ item.line_total|money }}</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:1rem 1.3rem">
+        <div class="summary-row"><span>Subtotal</span><span>{{ order.subtotal|money }}</span></div>
+        <div class="summary-row"><span>Delivery</span><span>{{ order.shipping_fee|money }}</span></div>
+        <div class="summary-row total"><span>Total</span><span>{{ order.total|money }}</span></div>
+      </div>
+    </div>
+
+    <div class="cols-2">
+      <div class="card card-pad">
+        <h3>Customer &amp; delivery</h3>
+        <p style="margin:0">{{ order.full_name }}<br>{{ order.email }}<br>{{ order.phone }}<br>{{ order.address }}, {{ order.city }}</p>
+      </div>
+      <div class="card card-pad">
+        <h3>Payment</h3>
+        <p style="margin:0">{{ order.get_payment_method_display }}</p>
+        {% if order.notes %}<h3 class="mt">Customer notes</h3><p style="margin:0">{{ order.notes }}</p>{% endif %}
+        <p class="mt small"><a href="{% url 'admin:store_order_change' order.pk %}">Open in full admin →</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

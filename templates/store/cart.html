@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}Your cart — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="page-head"><h1>Your cart</h1></div>
+
+{% if cart.lines %}
+<div class="two-col" style="margin-top:0">
+  <div class="card card-pad">
+    {% for line in cart.lines %}
+    <div class="cart-line">
+      <a class="cart-thumb" href="{{ line.product.get_absolute_url }}" style="--h: {{ line.product.placeholder_hue }}">
+        {% if line.product.image_src %}<img src="{{ line.product.image_src }}" alt="{{ line.product.name }}">{% else %}{{ line.product.category.icon }}{% endif %}
+      </a>
+      <div>
+        <a href="{{ line.product.get_absolute_url }}"><strong>{{ line.product.name }}</strong></a>
+        <div class="price-row" style="margin:.2rem 0">
+          <span>{{ line.unit_price|money }}</span>
+          {% if line.product.has_discount %}<span class="price-old">{{ line.product.price|money }}</span><span class="save-tag">-{{ line.product.discount_percent }}%</span>{% endif %}
+        </div>
+        <form action="{% url 'store:update_cart' line.product.pk %}" method="post" class="qty-form">
+          {% csrf_token %}
+          <label class="small muted" for="qty-{{ line.product.pk }}">Qty</label>
+          <input id="qty-{{ line.product.pk }}" type="number" name="quantity" value="{{ line.quantity }}" min="1" max="{{ line.product.stock }}">
+          <button class="btn btn-ghost btn-sm" type="submit">Update</button>
+        </form>
+      </div>
+      <div class="right">
+        <strong>{{ line.line_total|money }}</strong>
+        <form action="{% url 'store:remove_from_cart' line.product.pk %}" method="post" style="margin-top:.4rem">
+          {% csrf_token %}
+          <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+        </form>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <aside class="card card-pad">
+    <h2>Order summary</h2>
+    {% if cart.amount_to_free_shipping > 0 %}
+      <p class="small muted" style="margin-bottom:0">Add <strong>{{ cart.amount_to_free_shipping|money }}</strong> more for free delivery.</p>
+      <div class="progress"><span style="width: {{ cart.free_shipping_progress }}%"></span></div>
+    {% else %}
+      <p class="small" style="color:var(--success)">🎉 You've unlocked free delivery!</p>
+    {% endif %}
+    <div class="summary-row"><span>Subtotal</span><span>{{ cart.subtotal|money }}</span></div>
+    <div class="summary-row"><span>Delivery</span><span>{% if cart.shipping == 0 %}Free{% else %}{{ cart.shipping|money }}{% endif %}</span></div>
+    <div class="summary-row total"><span>Total</span><span>{{ cart.total|money }}</span></div>
+    <a class="btn btn-primary btn-block" style="margin-top:1rem" href="{% url 'store:checkout' %}">Proceed to checkout</a>
+    <a class="btn btn-ghost btn-block" style="margin-top:.6rem" href="{% url 'store:product_list' %}">Continue shopping</a>
+  </aside>
+</div>
+{% else %}
+<div class="empty card">
+  <div class="big">🛒</div>
+  <h2>Your cart is empty</h2>
+  <p class="muted">Browse our latest deals and add something you like.</p>
+  <a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a>
+</div>
+{% endif %}
+{% endblock %}

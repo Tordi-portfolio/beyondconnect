@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}My dashboard — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+  {% include "accounts/_side_nav.html" with section="dashboard" %}
+
+  <div>
+    <h1>Hello, {{ user.first_name|default:user.username }} 👋</h1>
+    <p class="muted">Here's what's happening with your account.</p>
+
+    <div class="stat-grid">
+      <div class="card stat"><div class="label">Orders placed</div><div class="value">{{ order_count }}</div></div>
+      <div class="card stat"><div class="label">In progress</div><div class="value">{{ active_orders }}</div><div class="sub">pending, processing or shipped</div></div>
+      <div class="card stat"><div class="label">Total spent</div><div class="value">{{ total_spent|money }}</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.5rem">
+      <div class="card-title"><h2>Recent orders</h2><a href="{% url 'accounts:order_list' %}">View all</a></div>
+      {% if recent_orders %}
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for order in recent_orders %}
+            <tr>
+              <td><a href="{% url 'accounts:order_detail' order.pk %}"><strong>{{ order.reference }}</strong></a></td>
+              <td>{{ order.created_at|date:"j M Y" }}</td>
+              <td>{{ order.item_count }}</td>
+              <td>{{ order.total|money }}</td>
+              <td><span class="status {{ order.status_class }}">{{ order.get_status_display }}</span></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="empty"><div class="big">📦</div><p class="muted">You haven't placed any orders yet.</p><a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a></div>
+      {% endif %}
+    </div>
+
+    {% if not profile.address or not profile.phone %}
+      <div class="message info" style="margin-bottom:1.5rem"><span>Add your phone and delivery address to speed up checkout.</span><a href="{% url 'accounts:profile' %}">Update profile</a></div>
+    {% endif %}
+
+    {% if deals %}
+    <div class="section-head"><h2>🔥 Deals picked for you</h2><a href="{% url 'store:product_list' %}?deals=1&sort=discount">More deals →</a></div>
+    <div class="grid">{% for product in deals %}{% include "store/_product_card.html" %}{% endfor %}</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

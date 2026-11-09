@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}My orders — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+  {% include "accounts/_side_nav.html" with section="orders" %}
+
+  <div>
+    <h1>My orders</h1>
+    <div class="card">
+      {% if page_obj.object_list %}
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Order</th><th>Date</th><th>Items</th><th>Total</th><th>Status</th><th></th></tr></thead>
+          <tbody>
+          {% for order in page_obj %}
+            <tr>
+              <td><strong>{{ order.reference }}</strong></td>
+              <td>{{ order.created_at|date:"j M Y, H:i" }}</td>
+              <td>{{ order.item_count }}</td>
+              <td>{{ order.total|money }}</td>
+              <td><span class="status {{ order.status_class }}">{{ order.get_status_display }}</span></td>
+              <td class="right"><a class="btn btn-ghost btn-sm" href="{% url 'accounts:order_detail' order.pk %}">View</a></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="empty"><div class="big">📦</div><p class="muted">No orders yet.</p><a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a></div>
+      {% endif %}
+    </div>
+    {% include "partials/_pagination.html" %}
+  </div>
+</div>
+{% endblock %}

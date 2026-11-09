@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}Order placed — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="card card-pad auth-card wide center">
+    <div style="font-size:3.5rem">🎉</div>
+    <h1>Thank you, {{ order.full_name }}!</h1>
+    <p class="muted">Your order <strong>{{ order.reference }}</strong> has been received. We'll email updates to {{ order.email }}.</p>
+
+    <div style="text-align:left;margin:1.5rem 0">
+      {% for item in order.items.all %}
+        <div class="summary-row"><span>{{ item.quantity }} × {{ item.product_name }}</span><span>{{ item.line_total|money }}</span></div>
+      {% endfor %}
+      <div class="summary-row"><span>Delivery</span><span>{% if order.shipping_fee == 0 %}Free{% else %}{{ order.shipping_fee|money }}{% endif %}</span></div>
+      <div class="summary-row total"><span>Total</span><span>{{ order.total|money }}</span></div>
+      <p class="small muted mt">Delivering to: {{ order.address }}, {{ order.city }} · {{ order.get_payment_method_display }}</p>
+    </div>
+
+    <div class="card card-pad" style="background:#f0fdf4;border-color:#bbf7d0;margin-bottom:1.2rem">
+      {% if auto_redirect %}
+        <p style="margin:0 0 .8rem"><strong>Opening WhatsApp in <span id="wa-count">5</span>s…</strong><br>
+        <span class="small muted">Send the pre-filled message to confirm your order with us.</span></p>
+      {% else %}
+        <p style="margin:0 0 .8rem" class="small muted">Send your order details to us on WhatsApp to confirm.</p>
+      {% endif %}
+      <a class="btn btn-primary btn-block" id="wa-link" href="{{ whatsapp_url }}" target="_blank" rel="noopener">💬 Send order on WhatsApp</a>
+    </div>
+
+    <a class="btn btn-ghost" href="{% url 'accounts:order_detail' order.pk %}">View order</a>
+    <a class="btn btn-ghost" href="{% url 'store:product_list' %}">Keep shopping</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if auto_redirect %}
+<script>
+  (function () {
+    var seconds = 5;
+    var counter = document.getElementById("wa-count");
+    var target = document.getElementById("wa-link").href;
+    var timer = setInterval(function () {
+      seconds -= 1;
+      if (counter) counter.textContent = seconds;
+      if (seconds <= 0) {
+        clearInterval(timer);
+        window.location.href = target;
+      }
+    }, 1000);
+  })();
+</script>
+{% endif %}
+{% endblock %}

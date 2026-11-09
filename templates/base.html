@@ -1,0 +1,99 @@
+{% load static %}<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }} — Great products, honest prices{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Shop quality products at discounted prices at {{ SITE_NAME }}.{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-row">
+      <a href="{% url 'store:home' %}" class="brand"><span class="brand-mark">🔗</span>{{ SITE_NAME }}</a>
+
+      <form class="search-form" action="{% url 'store:search' %}" method="get" role="search" autocomplete="off">
+        <input type="search" name="q" value="{{ request.GET.q }}" placeholder="Search products, e.g. laptop, shoes, lamp…" aria-label="Search products" data-search-input>
+        <button class="btn btn-primary" type="submit">Search</button>
+        <div class="suggest" data-suggest data-url="{% url 'store:suggest' %}" hidden></div>
+      </form>
+
+      <button class="nav-toggle" type="button" aria-label="Toggle menu" data-nav-toggle>☰</button>
+      <nav class="nav" data-nav>
+        <a href="{% url 'store:product_list' %}">Shop</a>
+        <a href="{% url 'store:about' %}">About</a>
+        <a href="{% url 'store:contact' %}">Contact</a>
+        <a href="{% url 'store:testimonials' %}">Testimonies</a>
+        <a href="{% url 'store:product_list' %}?deals=1&sort=discount">🔥 Deals</a>
+        <a href="{% url 'store:cart' %}" class="cart-link">🛒 Cart{% if cart_count %}<span class="cart-count">{{ cart_count }}</span>{% endif %}</a>
+        {% if user.is_authenticated %}
+          {% if user.is_staff %}<a href="{% url 'dashboard:home' %}">Admin</a>{% endif %}
+          <a href="{% url 'accounts:dashboard' %}">👤 {{ user.first_name|default:user.username }}</a>
+          <form action="{% url 'accounts:logout' %}" method="post">{% csrf_token %}<button type="submit" class="link-button">Log out</button></form>
+        {% else %}
+          <a href="{% url 'accounts:login' %}">Log in</a>
+          <a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-sm">Sign up</a>
+        {% endif %}
+      </nav>
+    </div>
+    {% if nav_categories %}
+    <div class="category-bar">
+      <div class="container">
+        {% for c in nav_categories %}<a href="{{ c.get_absolute_url }}">{{ c.icon }} {{ c.name }}</a>{% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </header>
+
+  <main>
+    <div class="container">
+      {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}"><span>{{ message }}</span><button type="button" class="close" aria-label="Dismiss" data-dismiss>×</button></div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4>{{ SITE_NAME }}</h4>
+          <p>Quality everyday products at prices you'll love. Discounts on thousands of items, delivered to your door.</p>
+        </div>
+        <div>
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="{% url 'store:product_list' %}">All products</a></li>
+            <li><a href="{% url 'store:product_list' %}?deals=1&sort=discount">Today's deals</a></li>
+            <li><a href="{% url 'store:cart' %}">Your cart</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Account</h4>
+          <ul>
+            {% if user.is_authenticated %}
+              <li><a href="{% url 'accounts:dashboard' %}">My dashboard</a></li>
+              <li><a href="{% url 'accounts:order_list' %}">My orders</a></li>
+            {% else %}
+              <li><a href="{% url 'accounts:login' %}">Log in</a></li>
+              <li><a href="{% url 'accounts:signup' %}">Create account</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+      <div class="copyright">© {% now "Y" %} {{ SITE_NAME }}. All rights reserved.</div>
+    </div>
+  </footer>
+  <script src="{% static 'js/main.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

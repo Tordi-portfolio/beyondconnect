@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Contact us — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Contact {{ SITE_NAME }} by phone, WhatsApp or email. Based in Port Harcourt, delivering nationwide.{% endblock %}
+
+{% block content %}
+<div class="page-head center">
+  <h1>Contact us</h1>
+  <p class="muted">Questions about a product or an order? Reach us any way you like.</p>
+</div>
+
+<div class="two-col" style="margin-top:0">
+  <!-- Contact details -->
+  <div class="card card-pad">
+    <h2>Get in touch</h2>
+
+    <div class="perk" style="margin-bottom:.8rem">
+      <span class="ico">📞</span>
+      <div>
+        <strong>Phone &amp; WhatsApp</strong>
+        <span><a href="tel:+2347068848255">07068848255</a> · <a href="https://wa.me/2347068848255" target="_blank" rel="noopener">WhatsApp</a></span><br>
+        <span><a href="tel:+2349111432740">09111432740</a> · <a href="https://wa.me/2349111432740" target="_blank" rel="noopener">WhatsApp</a></span>
+      </div>
+    </div>
+
+    <div class="perk" style="margin-bottom:.8rem">
+      <span class="ico">✉️</span>
+      <div>
+        <strong>Email</strong>
+        <span><a href="mailto:techwithtordi@gmail.com">techwithtordi@gmail.com</a></span>
+      </div>
+    </div>
+
+    <div class="perk" style="margin-bottom:.8rem">
+      <span class="ico">📍</span>
+      <div>
+        <strong>Location</strong>
+        <span>University area, Port Harcourt, Rivers State, Nigeria</span>
+      </div>
+    </div>
+
+    <div class="perk">
+      <span class="ico">🚚</span>
+      <div>
+        <strong>We deliver nationwide</strong>
+        <span>Wherever you are in the country, we can get your order to you.</span>
+      </div>
+    </div>
+
+    <a class="btn btn-primary btn-block mt" href="https://wa.me/2347068848255" target="_blank" rel="noopener">💬 Chat with us on WhatsApp</a>
+  </div>
+
+  <!-- Message form: opens WhatsApp with the message already written -->
+  <div class="card card-pad">
+    <h2>Send us a message</h2>
+    <p class="small muted">Fill this in and tap send. WhatsApp opens with your message ready to go.</p>
+
+    <form id="contact-form" novalidate>
+      <div class="field">
+        <label for="c-name">Your name</label>
+        <input class="input" id="c-name" type="text" placeholder="Your full name" required>
+      </div>
+      <div class="field">
+        <label for="c-phone">Phone number</label>
+        <input class="input" id="c-phone" type="tel" placeholder="e.g. 0801 234 5678">
+      </div>
+      <div class="field">
+        <label for="c-subject">What is this about?</label>
+        <select class="input" id="c-subject">
+          <option>Product enquiry</option>
+          <option>My order</option>
+          <option>Delivery question</option>
+          <option>Something else</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="c-message">Message</label>
+        <textarea class="input" id="c-message" rows="5" placeholder="How can we help?" required></textarea>
+      </div>
+      <div class="field-error hidden" id="c-error">Please enter your name and a message.</div>
+      <button type="submit" class="btn btn-primary btn-block">Send on WhatsApp</button>
+      <p class="small muted center mt" style="margin-bottom:0">
+        Prefer email? <a href="mailto:techwithtordi@gmail.com">techwithtordi@gmail.com</a>
+      </p>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  (function () {
+    var form = document.getElementById("contact-form");
+    var error = document.getElementById("c-error");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var name = document.getElementById("c-name").value.trim();
+      var phone = document.getElementById("c-phone").value.trim();
+      var subject = document.getElementById("c-subject").value;
+      var message = document.getElementById("c-message").value.trim();
+      if (!name || !message) {
+        error.classList.remove("hidden");
+        return;
+      }
+      error.classList.add("hidden");
+      var text = "Hello {{ SITE_NAME|escapejs }}, my name is " + name + "." +
+        "\nSubject: " + subject +
+        (phone ? "\nPhone: " + phone : "") +
+        "\n\n" + message;
+      window.open("https://wa.me/2347068848255?text=" + encodeURIComponent(text), "_blank", "noopener");
+    });
+  })();
+</script>
+{% endblock %}

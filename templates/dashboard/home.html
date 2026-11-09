@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}Admin dashboard — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+  {% include "dashboard/_side_nav.html" %}
+
+  <div>
+    <div class="section-head">
+      <div><h1 style="margin:0">Store overview</h1><p class="muted" style="margin:0">Everything happening on {{ SITE_NAME }}, at a glance.</p></div>
+    </div>
+
+    <div class="stat-grid" style="margin-top:1.2rem">
+      <div class="card stat"><div class="label">Revenue</div><div class="value">{{ revenue|money }}</div><div class="sub">{{ revenue_today|money }} today · excl. cancelled</div></div>
+      <div class="card stat"><div class="label">Orders</div><div class="value">{{ order_total }}</div><div class="sub">{{ pending }} pending · avg {{ avg_order|money }}</div></div>
+      <div class="card stat"><div class="label">Customers</div><div class="value">{{ customers }}</div><div class="sub">+{{ new_customers }} in the last 7 days</div></div>
+      <div class="card stat"><div class="label">Products</div><div class="value">{{ product_total }}</div><div class="sub">{{ active_products }} visible in store</div></div>
+    </div>
+
+    <div class="cols-2">
+      <div class="card">
+        <div class="card-title"><h3>Sales — last 7 days</h3><span class="muted small">{{ week_total|money }}</span></div>
+        <div class="bars">
+          {% for d in days %}
+            <div class="bar-col" title="{{ d.day|date:'D j M' }}: {{ d.total|money }} from {{ d.orders }} order{{ d.orders|pluralize }}">
+              <span class="bar-val">{% if d.total %}{{ d.total|money }}{% endif %}</span>
+              <div class="bar" style="height: {{ d.pct }}%"></div>
+              <span class="bar-label">{{ d.day|date:"D" }}</span>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><h3>Orders by status</h3><a href="{% url 'dashboard:orders' %}" class="small">Manage</a></div>
+        <div style="padding:.6rem 0">
+          {% for s in statuses %}
+            <div class="status-row">
+              <span><span class="status status-{{ s.key }}">{{ s.label }}</span></span>
+              <div class="meter"><span style="width: {{ s.pct }}%"></span></div>
+              <strong>{{ s.count }}</strong>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.2rem">
+      <div class="card-title"><h3>Recent orders</h3><a href="{% url 'dashboard:orders' %}" class="small">View all</a></div>
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Total</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for order in recent_orders %}
+            <tr>
+              <td><a href="{% url 'dashboard:order_detail' order.pk %}"><strong>{{ order.reference }}</strong></a></td>
+              <td>{{ order.full_name }}</td>
+              <td>{{ order.created_at|date:"j M, H:i" }}</td>
+              <td>{{ order.total|money }}</td>
+              <td><span class="status {{ order.status_class }}">{{ order.get_status_display }}</span></td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="5" class="center muted">No orders yet.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="cols-2">
+      <div class="card">
+        <div class="card-title"><h3>🏆 Top selling products</h3></div>
+        <ul class="list-plain">
+          {% for p in top_products %}
+            <li><span>{{ p.product_name }}</span><span><strong>{{ p.units }}</strong> sold · {{ p.revenue|money }}</span></li>
+          {% empty %}
+            <li class="muted">No sales yet.</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title"><h3>⚠️ Low stock</h3><a href="{% url 'dashboard:inventory' %}?stock=low" class="small">Inventory</a></div>
+        <ul class="list-plain">
+          {% for p in low_stock %}
+            <li><a href="{% url 'admin:store_product_change' p.pk %}">{{ p.name }}</a><span>{% if p.stock == 0 %}<span class="status status-cancelled">Out</span>{% else %}<strong>{{ p.stock }}</strong> left{% endif %}</span></li>
+          {% empty %}
+            <li class="muted">Everything is well stocked.</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><h3>🆕 Newest customers</h3><a href="{% url 'dashboard:customers' %}" class="small">All customers</a></div>
+      <ul class="list-plain">
+        {% for u in recent_users %}
+          <li><span><strong>{{ u.get_full_name|default:u.username }}</strong> <span class="muted">{{ u.email }}</span></span><span class="muted small">{{ u.date_joined|date:"j M Y" }}</span></li>
+        {% empty %}
+          <li class="muted">No sign-ups yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{% endblock %}

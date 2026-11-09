@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}Orders — Admin — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+  {% include "dashboard/_side_nav.html" %}
+
+  <div>
+    <h1>Orders</h1>
+    <form method="get" class="toolbar">
+      <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+        <input class="input" style="width:260px" type="search" name="q" value="{{ query }}" placeholder="Search name, email, TP-000123…">
+        <select name="status" class="select" onchange="this.form.submit()">
+          <option value="">All statuses</option>
+          {% for value, label in status_choices %}<option value="{{ value }}" {% if status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+        <button class="btn btn-primary btn-sm" type="submit">Filter</button>
+      </div>
+    </form>
+
+    <div class="card">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Order</th><th>Customer</th><th>Date</th><th>Items</th><th>Total</th><th>Payment</th><th>Status</th></tr></thead>
+          <tbody>
+          {% for order in page_obj %}
+            <tr>
+              <td><a href="{% url 'dashboard:order_detail' order.pk %}"><strong>{{ order.reference }}</strong></a></td>
+              <td>{{ order.full_name }}<br><span class="muted small">{{ order.email }}</span></td>
+              <td>{{ order.created_at|date:"j M Y, H:i" }}</td>
+              <td>{{ order.item_count }}</td>
+              <td>{{ order.total|money }}</td>
+              <td>{{ order.get_payment_method_display }}</td>
+              <td>
+                {% if order.status == 'cancelled' %}
+                  <span class="status status-cancelled">Cancelled</span>
+                {% else %}
+                  <form action="{% url 'dashboard:order_status' order.pk %}" method="post" class="inline-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="return_to" value="list">
+                    <select name="status" class="select" onchange="this.form.submit()" aria-label="Order status">
+                      {% for value, label in status_choices %}<option value="{{ value }}" {% if order.status == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+                    </select>
+                  </form>
+                {% endif %}
+              </td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="7" class="center muted" style="padding:2rem">No orders match your filters.</td></tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% include "partials/_pagination.html" %}
+  </div>
+</div>
+{% endblock %}

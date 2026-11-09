@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static store_extras %}
+{% block title %}About us — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}{{ SITE_NAME }} is a Port Harcourt based online store delivering quality products across Nigeria.{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>About {{ SITE_NAME }}</h1>
+  <p>We connect you to quality products at honest, discounted prices, and we bring them to your door wherever you are in Nigeria.</p>
+  <div class="hero-tags">
+    <a href="{% url 'store:product_list' %}">Shop now</a>
+    <a href="{% url 'store:contact' %}">Contact us</a>
+  </div>
+</section>
+
+<!-- Who we are -->
+<section class="section">
+  <div class="card card-pad">
+    <h2>Who we are</h2>
+    <p>{{ SITE_NAME }} is an online store based in Port Harcourt, Rivers State. We started with a simple idea: shopping online should be easy, prices should be clear, and you should always be able to reach a real person when you need help.</p>
+    <p style="margin-bottom:0">Every product on our site shows the original price, the discount and the price you actually pay, so there are no surprises at checkout.</p>
+  </div>
+</section>
+
+<!-- What we offer -->
+<section class="section">
+  <div class="section-head"><h2>What we offer</h2></div>
+  <div class="grid">
+    <div class="card card-pad"><div style="font-size:2rem">🛍️</div><h3>Wide product range</h3><p class="muted small" style="margin:0">Electronics, fashion, home and kitchen, beauty, sports and stationery, all in one place.</p></div>
+    <div class="card card-pad"><div style="font-size:2rem">🏷️</div><h3>Real discounts</h3><p class="muted small" style="margin:0">Clear sale prices with the original price shown next to them, so you see what you save.</p></div>
+    <div class="card card-pad"><div style="font-size:2rem">💬</div><h3>Personal support</h3><p class="muted small" style="margin:0">Reach us by phone, WhatsApp or email. We reply to help you choose and to confirm your order.</p></div>
+    <div class="card card-pad"><div style="font-size:2rem">🔒</div><h3>Simple, safe ordering</h3><p class="muted small" style="margin:0">Create an account, track your orders from your dashboard, and pay on delivery or by bank transfer.</p></div>
+  </div>
+</section>
+
+<!-- How we deliver -->
+<section class="section">
+  <div class="section-head"><h2>How we deliver across the country</h2></div>
+  <div class="card card-pad">
+    <p>We are based in Port Harcourt, but we deliver to customers all around Nigeria. Here is how it works:</p>
+    <div class="grid" style="margin-top:1rem">
+      <div><div style="font-size:1.6rem">1️⃣</div><h3>Choose &amp; order</h3><p class="muted small">Add what you like to your cart and check out with your delivery address.</p></div>
+      <div><div style="font-size:1.6rem">2️⃣</div><h3>We confirm on WhatsApp</h3><p class="muted small">After checkout, your order details open in WhatsApp so we can confirm everything with you.</p></div>
+      <div><div style="font-size:1.6rem">3️⃣</div><h3>We pack &amp; dispatch</h3><p class="muted small">Your items are packed carefully and sent to your city through our delivery partners.</p></div>
+      <div><div style="font-size:1.6rem">4️⃣</div><h3>Delivered to you</h3><p class="muted small">Receive your order at your address. Delivery time depends on your location, and we will tell you when we confirm.</p></div>
+    </div>
+    <p class="small muted" style="margin:1rem 0 0">Delivery is free on orders over {{ FREE_SHIPPING|money }}. Load the <code>store_extras</code> tags at the top if you want to use <code>money</code> here.</p>
+  </div>
+</section>
+
+<!-- Testimonials: shown only when you add real ones below -->
+{% comment %}
+HOW TO ADD A REAL TESTIMONIAL
+1. Save the client's photo (with their permission) in static/img/testimonials/, e.g. ada.jpg
+2. Copy the card below once per client and fill in their real name, city and words.
+3. Move the cards out of this comment block and into the grid below.
+
+<div class="card card-pad">
+  <div style="display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem">
+    <img src="{% static 'img/testimonials/ada.jpg' %}" alt="Photo of Ada O." width="56" height="56" style="width:56px;height:56px;border-radius:50%;object-fit:cover">
+    <div><strong>Ada O.</strong><br><span class="muted small">Lagos</span></div>
+  </div>
+  <p style="margin:0">“Their exact words go here.”</p>
+</div>
+{% endcomment %}
+
+<!--
+<section class="section">
+  <div class="section-head"><h2>What our customers say</h2></div>
+  <div class="grid">
+    PASTE YOUR REAL TESTIMONIAL CARDS HERE
+  </div>
+</section>
+-->
+
+<!-- Call to action -->
+<section class="section">
+  <div class="card card-pad center">
+    <h2>Ready to shop?</h2>
+    <p class="muted">Browse today's deals or talk to us directly.</p>
+    <a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a>
+    <a class="btn btn-outline" href="{% url 'store:contact' %}">Contact us</a>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load store_extras %}
+{% block title %}Order {{ order.reference }} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+  {% include "accounts/_side_nav.html" with section="orders" %}
+
+  <div>
+    <p class="breadcrumb"><a href="{% url 'accounts:order_list' %}">← All orders</a></p>
+    <div class="section-head">
+      <h1 style="margin:0">Order {{ order.reference }}</h1>
+      <span class="status {{ order.status_class }}">{{ order.get_status_display }}</span>
+    </div>
+    <p class="muted">Placed on {{ order.created_at|date:"j F Y, H:i" }}</p>
+
+    <div class="card" style="margin-bottom:1.2rem">
+      <div class="table-wrap">
+        <table class="table">
+          <thead><tr><th>Item</th><th>Price</th><th>Qty</th><th class="right">Total</th></tr></thead>
+          <tbody>
+          {% for item in order.items.all %}
+            <tr>
+              <td>{% if item.product %}<a href="{{ item.product.get_absolute_url }}">{{ item.product_name }}</a>{% else %}{{ item.product_name }}{% endif %}</td>
+              <td>{{ item.unit_price|money }}</td>
+              <td>{{ item.quantity }}</td>
+              <td class="right">{{ item.line_total|money }}</td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <div style="padding:1rem 1.3rem">
+        <div class="summary-row"><span>Subtotal</span><span>{{ order.subtotal|money }}</span></div>
+        <div class="summary-row"><span>Delivery</span><span>{% if order.shipping_fee == 0 %}Free{% else %}{{ order.shipping_fee|money }}{% endif %}</span></div>
+        <div class="summary-row total"><span>Total</span><span>{{ order.total|money }}</span></div>
+      </div>
+    </div>
+
+    <div class="cols-2">
+      <div class="card card-pad">
+        <h3>Delivery</h3>
+        <p style="margin:0">{{ order.full_name }}<br>{{ order.address }}<br>{{ order.city }}<br>{{ order.phone }}</p>
+      </div>
+      <div class="card card-pad">
+        <h3>Payment</h3>
+        <p style="margin:0">{{ order.get_payment_method_display }}</p>
+        {% if order.notes %}<h3 class="mt">Notes</h3><p style="margin:0">{{ order.notes }}</p>{% endif %}
+      </div>
+    </div>
+
+    {% if order.status == 'pending' %}
+    <form action="{% url 'accounts:cancel_order' order.pk %}" method="post" onsubmit="return confirm('Cancel this order?');">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Cancel order</button>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

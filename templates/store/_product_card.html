@@ -1,0 +1,27 @@
+{% load store_extras %}
+<article class="card product-card">
+  <a href="{{ product.get_absolute_url }}" class="card-media" style="--h: {{ product.placeholder_hue }}" aria-label="{{ product.name }}">
+    {% if product.image_src %}<img src="{{ product.image_src }}" alt="{{ product.name }}" loading="lazy">{% else %}<span class="ph-icon">{{ product.category.icon }}</span>{% endif %}
+    {% if product.has_discount %}<span class="badge badge-sale">-{{ product.discount_percent }}%</span>{% endif %}
+    {% if not product.in_stock %}<span class="badge badge-out">Sold out</span>{% endif %}
+  </a>
+  <div class="card-body">
+    <p class="card-cat">{{ product.category.name }}</p>
+    <h3><a href="{{ product.get_absolute_url }}">{{ product.name }}</a></h3>
+    <p class="card-desc">{{ product.description|truncatechars:90 }}</p>
+    <div class="price-row">
+      <span class="price-now">{{ product.discounted_price|money }}</span>
+      {% if product.has_discount %}<span class="price-old">{{ product.price|money }}</span>{% endif %}
+    </div>
+    {% if product.in_stock %}
+      <form action="{% url 'store:add_to_cart' product.pk %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="quantity" value="1">
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="btn btn-primary btn-block btn-sm">Add to cart</button>
+      </form>
+    {% else %}
+      <button class="btn btn-ghost btn-block btn-sm" disabled>Out of stock</button>
+    {% endif %}
+  </div>
+</article>

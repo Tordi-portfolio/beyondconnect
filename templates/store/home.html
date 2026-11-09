@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block content %}
+<section class="hero">
+  <h1>Find it. Love it. Pay less for it.</h1>
+  <p>Thousands of everyday products with discounted prices, fast delivery and a simple checkout.</p>
+  <form class="hero-search" action="{% url 'store:search' %}" method="get">
+    <input type="search" name="q" placeholder="What are you looking for today?" aria-label="Search products">
+    <button class="btn btn-primary" type="submit">Search</button>
+  </form>
+  <div class="hero-tags">
+    <span>Popular:</span>
+    <a href="{% url 'store:search' %}?q=laptop">Laptop</a>
+    <a href="{% url 'store:search' %}?q=shoes">Shoes</a>
+    <a href="{% url 'store:search' %}?q=lamp">Lamp</a>
+    <a href="{% url 'store:search' %}?q=kitchen">Kitchen</a>
+  </div>
+</section>
+
+<section class="perks">
+  <div class="perk"><span class="ico">🚚</span><div><strong>Free delivery</strong><span>On orders over {{ FREE_SHIPPING|money }}</span></div></div>
+  <div class="perk"><span class="ico">🏷️</span><div><strong>Real discounts</strong><span>Every sale price shown clearly</span></div></div>
+  <div class="perk"><span class="ico">🔒</span><div><strong>Secure accounts</strong><span>Your details stay protected</span></div></div>
+  <div class="perk"><span class="ico">↩️</span><div><strong>Easy cancellations</strong><span>Cancel pending orders anytime</span></div></div>
+</section>
+
+{% if categories %}
+<section class="section">
+  <div class="section-head"><h2>Shop by category</h2></div>
+  <div class="chips">
+    {% for c in categories %}<a class="chip" href="{{ c.get_absolute_url }}">{{ c.icon }} {{ c.name }} <span class="muted small">({{ c.product_total }})</span></a>{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% if deals %}
+<section class="section">
+  <div class="section-head">
+    <h2>🔥 Hot deals</h2>
+    <a href="{% url 'store:product_list' %}?deals=1&sort=discount">See all deals →</a>
+  </div>
+  <div class="grid">{% for product in deals %}{% include "store/_product_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if featured %}
+<section class="section">
+  <div class="section-head"><h2>⭐ Featured products</h2><a href="{% url 'store:product_list' %}">Browse everything →</a></div>
+  <div class="grid">{% for product in featured %}{% include "store/_product_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if newest %}
+<section class="section">
+  <div class="section-head"><h2>✨ New arrivals</h2></div>
+  <div class="grid">{% for product in newest %}{% include "store/_product_card.html" %}{% endfor %}</div>
+</section>
+{% endif %}
+
+{% if not deals and not featured and not newest %}
+<div class="empty">
+  <div class="big">🛍️</div>
+  <h2>The shelves are empty</h2>
+  <p class="muted">Add products in the admin, or run <code>python manage.py seed_store</code> to load sample products.</p>
+</div>
+{% endif %}
+{% endblock %}

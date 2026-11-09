@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load store_extras %}
+
+{% block title %}{% if query %}Results for "{{ query }}"{% elif category %}{{ category.name }}{% else %}All products{% endif %} — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  {% if query %}
+    <h1>Results for “{{ query }}”</h1>
+  {% elif category %}
+    <h1>{{ category.icon }} {{ category.name }}</h1>
+    {% if category.description %}<p class="muted">{{ category.description }}</p>{% endif %}
+  {% elif deals_only %}
+    <h1>🔥 Deals &amp; discounts</h1>
+  {% else %}
+    <h1>All products</h1>
+  {% endif %}
+</div>
+
+<div class="chips mb">
+  <a class="chip {% if not category %}active{% endif %}" href="{% url 'store:product_list' %}{% if query %}?q={{ query|urlencode }}{% endif %}">All</a>
+  {% for c in categories %}
+    <a class="chip {% if category and category.pk == c.pk %}active{% endif %}" href="{{ c.get_absolute_url }}{% if query %}?q={{ query|urlencode }}{% endif %}">{{ c.icon }} {{ c.name }}</a>
+  {% endfor %}
+</div>
+
+<div class="toolbar">
+  <p class="muted" style="margin:0">{{ result_count }} product{{ result_count|pluralize }} found</p>
+  <form method="get">
+    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+    <label class="small"><input type="checkbox" name="deals" value="1" {% if deals_only %}checked{% endif %} onchange="this.form.submit()"> On sale only</label>
+    <select name="sort" class="select" onchange="this.form.submit()" aria-label="Sort products">
+      {% for value, label in sort_options %}<option value="{{ value }}" {% if sort == value %}selected{% endif %}>{{ label }}</option>{% endfor %}
+    </select>
+  </form>
+</div>
+
+{% if products %}
+  <div class="grid">{% for product in products %}{% include "store/_product_card.html" %}{% endfor %}</div>
+  {% include "partials/_pagination.html" %}
+{% else %}
+  <div class="empty card">
+    <div class="big">🔍</div>
+    <h2>No products found{% if query %} for “{{ query }}”{% endif %}</h2>
+    <p class="muted">Try a different spelling, a more general word, or browse a category.</p>
+    <a class="btn btn-primary" href="{% url 'store:product_list' %}">Browse all products</a>
+  </div>
+{% endif %}
+{% endblock %}

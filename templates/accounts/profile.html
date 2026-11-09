@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My profile — {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="dash-grid">
+  {% include "accounts/_side_nav.html" with section="profile" %}
+
+  <div>
+    <h1>My profile</h1>
+    <form method="post" class="card card-pad" novalidate>
+      {% csrf_token %}
+      <h2>Personal details</h2>
+      <div class="form-grid">
+        <div class="field"><label for="{{ user_form.first_name.id_for_label }}">First name</label>{{ user_form.first_name }}{% for e in user_form.first_name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field"><label for="{{ user_form.last_name.id_for_label }}">Last name</label>{{ user_form.last_name }}{% for e in user_form.last_name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field full"><label for="{{ user_form.email.id_for_label }}">Email</label>{{ user_form.email }}{% for e in user_form.email.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+      </div>
+
+      <h2 class="mt">Delivery details</h2>
+      <div class="form-grid">
+        <div class="field"><label for="{{ profile_form.phone.id_for_label }}">Phone</label>{{ profile_form.phone }}{% for e in profile_form.phone.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field"><label for="{{ profile_form.city.id_for_label }}">City</label>{{ profile_form.city }}{% for e in profile_form.city.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+        <div class="field full"><label for="{{ profile_form.address.id_for_label }}">Address</label>{{ profile_form.address }}{% for e in profile_form.address.errors %}<div class="field-error">{{ e }}</div>{% endfor %}</div>
+      </div>
+      <button class="btn btn-primary" type="submit">Save changes</button>
+    </form>
+    <p class="small muted mt">Username: <strong>{{ user.username }}</strong> · Member since {{ user.date_joined|date:"j M Y" }} · <a href="{% url 'accounts:password_reset' %}">Reset password</a></p>
+  </div>
+</div>
+{% endblock %}

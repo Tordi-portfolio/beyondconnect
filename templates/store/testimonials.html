@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Customer testimonies — {{ SITE_NAME }}{% endblock %}
+{% block meta_description %}Read real experiences from customers who ordered and received their gifts from {{ SITE_NAME }}.{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <h1>Happy customers, delivered.</h1>
+  <p>Real stories from people who ordered with {{ SITE_NAME }} and received their gifts, from Port Harcourt to every corner of Nigeria.</p>
+  <div class="hero-tags">
+    <a href="{% url 'store:product_list' %}">Shop now</a>
+    <a href="{% url 'store:contact' %}">Contact us</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-head">
+    <h2>What our customers say</h2>
+    {% if testimonials %}<span class="muted">{{ testimonials|length }} testimon{{ testimonials|length|pluralize:"y,ies" }}</span>{% endif %}
+  </div>
+
+  {% if testimonials %}
+    <div class="grid" style="grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));">
+      {% for t in testimonials %}
+      <article class="card card-pad" style="display:flex;flex-direction:column;gap:1rem">
+        <div style="font-size:1.4rem;color:var(--accent)" aria-label="5 out of 5 stars">★★★★★</div>
+
+        <p style="margin:0;flex:1">“{{ t.message|linebreaksbr }}”</p>
+
+        {% if t.item %}
+          <p class="small" style="margin:0"><span class="pill pill-ok">🎁 Ordered: {{ t.item }}</span></p>
+        {% endif %}
+
+        <div style="display:flex;align-items:center;gap:.8rem;border-top:1px solid var(--border);padding-top:1rem">
+          {% if t.photo %}
+            <img src="{{ t.photo.url }}" alt="Photo of {{ t.name }}" width="52" height="52" loading="lazy"
+                 style="width:52px;height:52px;border-radius:50%;object-fit:cover">
+          {% else %}
+            <div aria-hidden="true" style="width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;background:linear-gradient(135deg,var(--primary),#7c3aed)">{{ t.name|first|upper }}</div>
+          {% endif %}
+          <div>
+            <strong>{{ t.name }}</strong><br>
+            <span class="muted small">📍 {{ t.location }}</span>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="card empty">
+      <div class="big">💬</div>
+      <h2>Customer stories are coming soon</h2>
+      <p class="muted">Ordered from us recently? We'd love to hear how it went.</p>
+    </div>
+  {% endif %}
+</section>
+
+<section class="section">
+  <div class="card card-pad center">
+    <h2>Ordered from us? Share your experience</h2>
+    <p class="muted">Tell us what you ordered and how your delivery went. With your permission, we may feature your story here.</p>
+    <a class="btn btn-primary"
+       href="https://wa.me/2347068848255?text=Hello%20{{ SITE_NAME|urlencode }}%2C%20I%20would%20like%20to%20share%20my%20experience.%0A%0AName%3A%20%0ALocation%3A%20%0AWhat%20I%20ordered%3A%20%0AMy%20experience%3A%20"
+       target="_blank" rel="noopener">💬 Send my testimony on WhatsApp</a>
+    <a class="btn btn-outline" href="mailto:techwithtordi@gmail.com?subject=My%20testimony">✉️ Email us</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="card card-pad center">
+    <h2>Ready to order your own?</h2>
+    <p class="muted">Browse our products and get them delivered wherever you are in Nigeria.</p>
+    <a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a>
+  </div>
+</section>
+{% endblock %}
