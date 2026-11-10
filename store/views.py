@@ -12,7 +12,7 @@ from django.views.decorators.http import require_POST
 from accounts.models import Profile
 
 from .cart import Cart
-from .forms import CheckoutForm
+from .forms import CheckoutForm, TestimonialForm
 from .models import Category, Order, OrderItem, Product, Testimonial
 from .whatsapp import build_whatsapp_url
 
@@ -28,13 +28,43 @@ SORT_OPTIONS = [
 ]
 
 
+from datetime import timedelta
+
+from django.contrib.auth.views import redirect_to_login
+from django.utils import timezone
+
 class StockError(Exception):
     pass
 
 
 def testimonials(request):
+    initial = {}
+    if request.user.is_authenticated:
+        initial["name"] = request.user.get_full_name() or request.user.username
+    form = TestimonialForm(request.POST or None, initial=initial)
+
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return redirect_to_login(request.get_full_path())
+
+        recent = Testimonial.objects.filter(
+            user=request.user, created_at__gte=timezone.now() - timedelta(days=1)
+        ).count()
+        if recent >= 3:
+            messages.error(request, "You've reached today's limit for testimonies. Please try again tomorrow.")
+            return redirect("store:testimonials")
+
+        if form.is_valid():
+            testimony = form.save(commit=False)
+            testimony.user = request.user
+            testimony.is_published = False  # you approve it in the admin first
+            testimony.save()
+            messages.success(request, "Thank you! Your testimony has been received and will appear once we approve it.")
+            return redirect("store:testimonials")
+
     return render(request, "store/testimonials.html", {
         "testimonials": Testimonial.objects.filter(is_published=True),
+        "form": form,
     })
 
 def about(request):

@@ -28,7 +28,7 @@
         </table>
       </div>
       {% else %}
-        <div class="empty"><div class="big">📦</div><p class="muted">No orders yet.</p><a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a></div>
+        <div class="empty"><div class="big"></div><p class="muted">No orders yet.</p><a class="btn btn-primary" href="{% url 'store:product_list' %}">Start shopping</a></div>
       {% endif %}
     </div>
     {% include "partials/_pagination.html" %}

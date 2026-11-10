@@ -9,6 +9,7 @@
   <div class="hero-tags">
     <a href="{% url 'store:product_list' %}">Shop now</a>
     <a href="{% url 'store:contact' %}">Contact us</a>
+    <a href="#share">Share your testimony</a>
   </div>
 </section>
 
@@ -50,18 +51,54 @@
       <div class="big">💬</div>
       <h2>Customer stories are coming soon</h2>
       <p class="muted">Ordered from us recently? We'd love to hear how it went.</p>
+      <a class="btn btn-primary" href="#share">Be the first to share</a>
     </div>
   {% endif %}
 </section>
 
-<section class="section">
-  <div class="card card-pad center">
+<!-- Submit a testimony -->
+<section class="section" id="share">
+  <div class="card card-pad" style="max-width:680px;margin-inline:auto">
     <h2>Ordered from us? Share your experience</h2>
-    <p class="muted">Tell us what you ordered and how your delivery went. With your permission, we may feature your story here.</p>
-    <a class="btn btn-primary"
-       href="https://wa.me/2347068848255?text=Hello%20{{ SITE_NAME|urlencode }}%2C%20I%20would%20like%20to%20share%20my%20experience.%0A%0AName%3A%20%0ALocation%3A%20%0AWhat%20I%20ordered%3A%20%0AMy%20experience%3A%20"
-       target="_blank" rel="noopener">💬 Send my testimony on WhatsApp</a>
-    <a class="btn btn-outline" href="mailto:techwithtordi@gmail.com?subject=My%20testimony">✉️ Email us</a>
+    <p class="muted">Your testimony helps other shoppers. It will appear on this page after we review it.</p>
+
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'store:testimonials' %}#share" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="alert-error">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="form-grid">
+          <div class="field">
+            <label for="{{ form.name.id_for_label }}">{{ form.name.label }}</label>{{ form.name }}
+            {% for e in form.name.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="field">
+            <label for="{{ form.location.id_for_label }}">{{ form.location.label }}</label>{{ form.location }}
+            {% for e in form.location.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="field full">
+            <label for="{{ form.item.id_for_label }}">{{ form.item.label }}</label>{{ form.item }}
+            {% for e in form.item.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+          </div>
+          <div class="field full">
+            <label for="{{ form.message.id_for_label }}">{{ form.message.label }}</label>{{ form.message }}
+            {% for e in form.message.errors %}<div class="field-error">{{ e }}</div>{% endfor %}
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Submit my testimony</button>
+      </form>
+    {% else %}
+      <div class="center">
+        <p>Please log in to share your testimony.</p>
+        <a class="btn btn-primary" href="{% url 'accounts:login' %}?next={% url 'store:testimonials' %}">Log in</a>
+        <a class="btn btn-outline" href="{% url 'accounts:signup' %}">Create account</a>
+      </div>
+    {% endif %}
+
+    <p class="small muted center mt" style="margin-bottom:0">
+      Prefer WhatsApp?
+      <a href="https://wa.me/2347068848255?text=Hello%20{{ SITE_NAME|urlencode }}%2C%20I%20would%20like%20to%20share%20my%20experience." target="_blank" rel="noopener">Send it to us there</a>
+      · <a href="mailto:techwithtordi@gmail.com?subject=My%20testimony">Email us</a>
+    </p>
   </div>
 </section>
 

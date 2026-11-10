@@ -70,7 +70,7 @@
 
     <div class="cols-2">
       <div class="card">
-        <div class="card-title"><h3>🏆 Top selling products</h3></div>
+        <div class="card-title"><h3> Top selling products</h3></div>
         <ul class="list-plain">
           {% for p in top_products %}
             <li><span>{{ p.product_name }}</span><span><strong>{{ p.units }}</strong> sold · {{ p.revenue|money }}</span></li>
@@ -80,7 +80,7 @@
         </ul>
       </div>
       <div class="card">
-        <div class="card-title"><h3>⚠️ Low stock</h3><a href="{% url 'dashboard:inventory' %}?stock=low" class="small">Inventory</a></div>
+        <div class="card-title"><h3> Low stock</h3><a href="{% url 'dashboard:inventory' %}?stock=low" class="small">Inventory</a></div>
         <ul class="list-plain">
           {% for p in low_stock %}
             <li><a href="{% url 'admin:store_product_change' p.pk %}">{{ p.name }}</a><span>{% if p.stock == 0 %}<span class="status status-cancelled">Out</span>{% else %}<strong>{{ p.stock }}</strong> left{% endif %}</span></li>
@@ -92,7 +92,7 @@
     </div>
 
     <div class="card">
-      <div class="card-title"><h3>🆕 Newest customers</h3><a href="{% url 'dashboard:customers' %}" class="small">All customers</a></div>
+      <div class="card-title"><h3> Newest customers</h3><a href="{% url 'dashboard:customers' %}" class="small">All customers</a></div>
       <ul class="list-plain">
         {% for u in recent_users %}
           <li><span><strong>{{ u.get_full_name|default:u.username }}</strong> <span class="muted">{{ u.email }}</span></span><span class="muted small">{{ u.date_joined|date:"j M Y" }}</span></li>

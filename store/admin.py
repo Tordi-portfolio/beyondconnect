@@ -5,10 +5,20 @@ from .models import Category, Order, OrderItem, Product, Testimonial
 
 @admin.register(Testimonial)
 class TestimonialAdmin(admin.ModelAdmin):
-    list_display = ("name", "location", "item", "is_published", "created_at")
+    list_display = ("name", "location", "item", "user", "is_published", "created_at")
     list_editable = ("is_published",)
-    list_filter = ("is_published",)
+    list_filter = ("is_published", "created_at")
     search_fields = ("name", "location", "message")
+    readonly_fields = ("user", "created_at")
+    actions = ["publish_selected", "unpublish_selected"]
+
+    @admin.action(description="Publish selected testimonies")
+    def publish_selected(self, request, queryset):
+        self.message_user(request, f"{queryset.update(is_published=True)} testimony(ies) published.")
+
+    @admin.action(description="Hide selected testimonies")
+    def unpublish_selected(self, request, queryset):
+        self.message_user(request, f"{queryset.update(is_published=False)} testimony(ies) hidden.")
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

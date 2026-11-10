@@ -16,6 +16,10 @@ class Testimonial(models.Model):
     item = models.CharField(max_length=200, blank=True, help_text="What they ordered (optional)")
     message = models.TextField(help_text="Their own words, with their permission to publish")
     photo = models.ImageField(upload_to="testimonials/", blank=True)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True,
+        on_delete=models.SET_NULL, related_name="testimonials",
+    )
     is_published = models.BooleanField(default=False, help_text="Tick to show on the website")
     created_at = models.DateTimeField(auto_now_add=True)
 

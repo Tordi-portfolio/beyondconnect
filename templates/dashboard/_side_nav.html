@@ -1,10 +1,10 @@
 <nav class="card side-nav" aria-label="Admin">
-  <a href="{% url 'dashboard:home' %}" class="{% if section == 'overview' %}active{% endif %}">📊 Overview</a>
-  <a href="{% url 'dashboard:orders' %}" class="{% if section == 'orders' %}active{% endif %}">📦 Orders</a>
-  <a href="{% url 'dashboard:customers' %}" class="{% if section == 'customers' %}active{% endif %}">👥 Customers</a>
-  <a href="{% url 'dashboard:inventory' %}" class="{% if section == 'inventory' %}active{% endif %}">🏷️ Inventory</a>
+  <a href="{% url 'dashboard:home' %}" class="{% if section == 'overview' %}active{% endif %}"> Overview</a>
+  <a href="{% url 'dashboard:orders' %}" class="{% if section == 'orders' %}active{% endif %}"> Orders</a>
+  <a href="{% url 'dashboard:customers' %}" class="{% if section == 'customers' %}active{% endif %}"> Customers</a>
+  <a href="{% url 'dashboard:inventory' %}" class="{% if section == 'inventory' %}active{% endif %}"> Inventory</a>
   <hr>
   <a href="{% url 'admin:store_product_add' %}">➕ Add product</a>
-  <a href="{% url 'admin:index' %}">🛠️ Full admin site</a>
-  <a href="{% url 'store:home' %}">🏪 View store</a>
+  <a href="{% url 'admin:index' %}"> Full admin site</a>
+  <a href="{% url 'store:home' %}"> View store</a>
 </nav>

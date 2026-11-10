@@ -37,7 +37,7 @@
               <td>{% if p.has_discount %}<span class="pill pill-sale">-{{ p.discount_percent }}%</span>{% else %}—{% endif %}</td>
               <td>{{ p.discounted_price|money }}</td>
               <td>{% if p.stock == 0 %}<span class="status status-cancelled">Out</span>{% elif p.is_low_stock %}<span class="status status-pending">{{ p.stock }}</span>{% else %}{{ p.stock }}{% endif %}</td>
-              <td>{% if p.is_active %}✅{% else %}🚫{% endif %}</td>
+              <td>{% if p.is_active %}{% else %}{% endif %}</td>
               <td class="right"><a class="btn btn-ghost btn-sm" href="{% url 'admin:store_product_change' p.pk %}">Edit</a></td>
             </tr>
           {% empty %}
