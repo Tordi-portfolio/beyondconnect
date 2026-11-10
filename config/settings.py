@@ -22,11 +22,12 @@ CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get("DJANGO_CSRF_TRUSTED_O
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    'localhost',
+    'localhost'
+    'beyondkonnet.onrender.com',
     'beyondconnect.store',
     'www.beyondconnect.store',
-    'beyondconnect-noi8.onrender.com',
 ]
+
 CSRF_TRUSTED_ORIGINS = [
     'https://beyondconnect.store',
     'https://www.beyondconnect.store',
