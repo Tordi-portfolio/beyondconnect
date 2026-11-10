@@ -144,8 +144,8 @@ class Order(models.Model):
     ]
     COD, TRANSFER = "cod", "transfer"
     PAYMENT_CHOICES = [
-        (COD, "Pay on delivery"),
-        (TRANSFER, "Bank transfer"),
+        (COD, "Crypto Transfer Payment"),
+        (TRANSFER, "Bank Transfer Payment"),
     ]
 
     user = models.ForeignKey(
