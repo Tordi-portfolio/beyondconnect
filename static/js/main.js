@@ -18,6 +18,24 @@
     });
   });
 
+  // Dark / light mode toggle
+  var themeBtn = document.querySelector("[data-theme-toggle]");
+  function applyTheme(theme) {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (themeBtn) {
+      themeBtn.textContent = theme === "dark" ? "☀️" : "🌙";
+      themeBtn.setAttribute("aria-label", theme === "dark" ? "Switch to light mode" : "Switch to dark mode");
+    }
+  }
+  if (themeBtn) {
+    applyTheme(document.documentElement.getAttribute("data-theme") || "light");
+    themeBtn.addEventListener("click", function () {
+      var next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      applyTheme(next);
+      try { localStorage.setItem("theme", next); } catch (e) {}
+    });
+  }
+
   // Search-as-you-type suggestions
   var input = document.querySelector("[data-search-input]");
   var box = document.querySelector("[data-suggest]");

@@ -285,3 +285,70 @@ table.table { width: 100%; border-collapse: collapse; font-size: .92rem; }
   .card-desc { display: none; }
 }
 @media (max-width: 420px) { .grid { grid-template-columns: 1fr; } }
+
+
+/* ==========================================================================
+   Dark mode
+   ========================================================================== */
+.theme-toggle {
+  display: inline-grid; place-items: center; width: 38px; height: 38px; padding: 0;
+  background: transparent; border: 1.5px solid var(--border); border-radius: 999px;
+  font-size: 1.05rem; line-height: 1; cursor: pointer; color: var(--text);
+}
+.theme-toggle:hover { background: var(--primary-soft); }
+@media (max-width: 760px) { .theme-toggle { width: auto; padding: 0 .9rem; align-self: flex-start; } }
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --primary-soft: rgba(99, 102, 241, .18);
+  --bg: #0b1020;
+  --surface: #141b2f;
+  --text: #e5e7eb;
+  --muted: #94a3b8;
+  --border: #27304a;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, .4);
+  --shadow: 0 8px 24px rgba(0, 0, 0, .45);
+}
+
+/* Links (low specificity so buttons and nav keep their own colours) */
+:where([data-theme="dark"]) a { color: #a5b4fc; }
+
+/* Surfaces that were hard-coded white */
+[data-theme="dark"] .site-header { background: rgba(11, 16, 32, .9); }
+[data-theme="dark"] .category-bar,
+[data-theme="dark"] .perk,
+[data-theme="dark"] .chip,
+[data-theme="dark"] .suggest,
+[data-theme="dark"] .pagination a,
+[data-theme="dark"] .pagination span,
+[data-theme="dark"] .message { background: var(--surface); }
+[data-theme="dark"] .search-form input:focus { background: var(--surface); }
+[data-theme="dark"] .chip.active { background: var(--primary); }
+[data-theme="dark"] .pagination .current { background: var(--primary); color: #fff; }
+[data-theme="dark"] .suggest a:hover { background: var(--primary-soft); }
+
+/* Form controls */
+[data-theme="dark"] .input,
+[data-theme="dark"] .select,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea,
+[data-theme="dark"] .qty-form input { background: var(--surface); color: var(--text); border-color: var(--border); }
+
+/* Buttons */
+[data-theme="dark"] .btn-outline { color: #a5b4fc; border-color: #818cf8; }
+[data-theme="dark"] .btn-ghost:hover { background: var(--surface); }
+[data-theme="dark"] .btn-danger { color: #fca5a5; border-color: rgba(220, 38, 38, .4); }
+[data-theme="dark"] .btn-danger:hover { background: rgba(220, 38, 38, .15); }
+
+/* Tables and alerts */
+[data-theme="dark"] .table tbody tr:hover { background: rgba(255, 255, 255, .04); }
+[data-theme="dark"] .alert-error { background: rgba(220, 38, 38, .15); border-color: rgba(220, 38, 38, .4); color: #fca5a5; }
+[data-theme="dark"] .message.success { background: rgba(22, 163, 74, .15); border-color: rgba(22, 163, 74, .4); color: #86efac; }
+[data-theme="dark"] .message.error   { background: rgba(220, 38, 38, .15); border-color: rgba(220, 38, 38, .4); color: #fca5a5; }
+[data-theme="dark"] .message.warning { background: rgba(217, 119, 6, .15); border-color: rgba(217, 119, 6, .4); color: #fcd34d; }
+[data-theme="dark"] .message.info    { background: rgba(59, 130, 246, .15); border-color: rgba(59, 130, 246, .4); color: #93c5fd; }
+
+/* The green WhatsApp box on the order confirmation page uses an inline light colour */
+[data-theme="dark"] .card[style*="#f0fdf4"] { background: rgba(22, 163, 74, .15) !important; border-color: rgba(22, 163, 74, .4) !important; }
