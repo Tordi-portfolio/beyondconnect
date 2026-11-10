@@ -114,6 +114,12 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 
+# Your source static folder (same directory as manage.py)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Destination for collected static files
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
