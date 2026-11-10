@@ -18,7 +18,7 @@ DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 # ALLOWED_HOSTS = [h.strip() for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if h.strip()]
 CSRF_TRUSTED_ORIGINS = [o.strip() for o in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",") if o.strip()]
 
-ALLOWED_HOSTS = ['beyondconnect-noi8.onrender.com']
+ALLOWED_HOSTS = ['127.0.0.1', 'beyondconnect-noi8.onrender.com']
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -35,6 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -110,11 +111,27 @@ USE_TZ = True
 # --------------------------------------------------------------------------
 # Static & media files
 # --------------------------------------------------------------------------
-STATIC_URL = "static/"
-STATICFILES_DIRS = [BASE_DIR / "static"]
+
+STATIC_URL = "/static/"
+
+# Your source static folder (same directory as manage.py)
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+
+# Destination for collected static files
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-MEDIA_URL = "media/"
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 # --------------------------------------------------------------------------
