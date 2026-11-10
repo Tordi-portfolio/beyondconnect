@@ -27,6 +27,10 @@ ALLOWED_HOSTS = [
     'www.beyondconnect.store',
     'beyondconnect-noi8.onrender.com',
 ]
+CSRF_TRUSTED_ORIGINS = [
+    'https://beyondconnect.store',
+    'https://www.beyondconnect.store',
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
